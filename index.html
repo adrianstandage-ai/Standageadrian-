@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PropertyPulse MTD</title>
+<title>PropertyPulse</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0e17;--s1:rgba(255,255,255,.055);--s2:rgba(255,255,255,.1);--line:rgba(255,255,255,.12);--tx:#f1f4fa;--mu:#9aa6bb;--inc:#6ee7b7;--exp:#fda4af;--acc:#7cc4ff;--gold:#f5d38a;
@@ -74,8 +74,8 @@ pre{white-space:pre-wrap;font:12.5px/1.6 ui-monospace,Menlo,monospace;background
 <script>
 const CATS=["Mortgage Interest (Finance Costs)","Repairs & Maintenance","Legal & Professional Fees","Property Agent Fees","Property Insurance","Utilities & Council Tax","Ground Rent & Service Charge","Platform/Advertising Fees (Airbnb/Booking.com)","Cleaning, Laundry & Guest Supplies","Travel & Vehicle Costs","Other Allowable Property Expenses"];
 const FIN=CATS[0],KEY="propertypulse_v1";
-const TABS=[["dash","Dashboard","M3 12l9-8 9 8M5 10v10h14V10"],["props","Properties","M4 21V7l8-4 8 4v14M9 21v-6h6v6"],["log","Log Entry","M12 5v14M5 12h14"],["tax","Tax & MTD","M6 3h9l4 4v14H6zM9 12h7M9 16h7"]];
-let S,tab="dash",type="inc",ty=2026,tipIdx=null,draft={};
+const TABS=[["dash","Dashboard","M3 12l9-8 9 8M5 10v10h14V10"],["props","Properties","M4 21V7l8-4 8 4v14M9 21v-6h6v6"],["log","Log Entry","M12 5v14M5 12h14"],["tax","Tax summary","M6 3h9l4 4v14H6zM9 12h7M9 16h7"]];
+let viewProp=null,S,tab="dash",type="inc",ty=2026,tipIdx=null,draft={};
 const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const gbp=(n,d=0)=>(n<0?"-":"")+"£"+Math.abs(n).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -132,31 +132,53 @@ function dash(){
  <div id="tip">${t?`<b>${["April","May","June","July","August","September","October","November","December","January","February","March"][tipIdx]}</b>: <span class="inc">${gbp(t.i)}</span> in, <span class="exp">${gbp(t.x)}</span> out`:`<span class="lbl">Tap a month for details</span>`}</div></div>
  <h2>Recent activity</h2><div class="card">${rec.length?rec.map(row).join(""):`<div class="empty">No entries yet. Log your first income or expense.</div>`}</div>`;
 }
-function row(x){const i=x.type=="inc";return`<div class="row"><div class="dot" style="background:${i?"rgba(127,207,166,.15)":"rgba(231,160,143,.15)"};color:var(--${i?"inc":"exp"})">${i?"↓":"↑"}</div>
+function row(x){const i=x.type=="inc";return`<div class="row" onclick="editEntry('${x.id}')" style="cursor:pointer"><div class="dot" style="background:${i?"rgba(127,207,166,.15)":"rgba(231,160,143,.15)"};color:var(--${i?"inc":"exp"})">${i?"↓":"↑"}</div>
  <div class="m"><b>${e(x.desc||x.cat||"Entry")}</b><span>${e(pname(x.pid))} · ${new Date(x.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span></div>
  <b class="${i?"inc":"exp"}">${i?"+":"-"}${gbp(x.amt,2)}</b></div>`}
 function yearSel(){return`<select class="pill" onchange="ty=+this.value;tipIdx=null;render()" aria-label="Tax year">${[2025,2026,2027].map(y=>`<option value="${y}" ${y==ty?"selected":""}>${y}/${String(y+1).slice(2)}</option>`).join("")}</select>`}
 
-function props(){
+function props(){if(viewProp)return propDetail();
  const cards=S.props.map(p=>{const L=S.entries.filter(x=>x.pid==p.id&&inTY(x.date)),i=sum(L.filter(x=>x.type=="inc")),x=sum(L.filter(x=>x.type=="exp"));
-  return`<div class="card prop"><div class="h"><div><b style="font-size:16px">${e(p.name)}</b><p class="sub">${e(p.addr)}</p></div><span class="tag ${p.kind=="STR"?"str":""}">${p.kind=="STR"?"Holiday let":"Long-term"}</span></div>
+  return`<div class="card prop" onclick="openProp('${p.id}')" style="cursor:pointer"><div class="h"><div><b style="font-size:16px">${e(p.name)}</b><p class="sub">${e(p.addr)}</p></div><span class="tag ${p.kind=="STR"?"str":""}">${p.kind=="STR"?"Holiday let":"Long-term"}</span></div>
   <div class="st"><div><div class="lbl">Income</div><b class="inc">${gbp(i)}</b></div><div><div class="lbl">Expenses</div><b class="exp">${gbp(x)}</b></div><div><div class="lbl">Bought for</div><b>${gbp(p.price)}</b></div></div>
-  <div style="display:flex;gap:8px"><button class="btn ghost sm" onclick="postInterest('${p.id}')">Log ${gbp(p.interest)} interest</button><button class="btn ghost sm" onclick="delProp('${p.id}')">Remove</button></div></div>`}).join("");
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="event.stopPropagation();openProp('${p.id}')">View history</button><button class="btn ghost sm" onclick="event.stopPropagation();postInterest('${p.id}')">Log ${gbp(p.interest)} interest</button><button class="btn ghost sm" onclick="event.stopPropagation();delProp('${p.id}')">Remove</button></div></div>`}).join("");
  return`<div class="top"><div><h1>Properties</h1><p class="sub">Your rental portfolio</p></div></div>
  <button class="btn" onclick="propModal()" style="margin-bottom:14px">Add property</button>${cards||`<div class="empty">No properties yet. Add one to start logging.</div>`}
  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost sm" onclick="if(confirm('Delete everything and start with an empty account?')){S={props:[],entries:[]};save();render()}">Start fresh</button><button class="btn ghost sm" onclick="if(confirm('Replace all data with the sample data?')){S=seed();save();render()}">Reset sample data</button></div>`;
 }
-function propModal(){
- layer(`<h1 style="margin-bottom:14px">Add property</h1><form onsubmit="addProp(event)">
- <label>Property name or ID<input name="name" required></label><label>Full address<input name="addr" required></label>
- <label>Rental type<select name="kind"><option value="PRS">Long-Term PRS</option><option value="STR">Short-Term STR / Holiday Let</option></select></label>
- <label>Purchase price<span class="amt"><input name="price" type="number" min="0" step="any" inputmode="decimal" required></span></label>
- <label>Monthly mortgage interest<span class="amt"><input name="interest" type="number" min="0" step="any" inputmode="decimal" required></span></label>
+function propModal(id){const p=id?S.props.find(q=>q.id==id):{};
+ layer(`<h1 style="margin-bottom:14px">${id?"Edit":"Add"} property</h1><form onsubmit="addProp(event,'${id||""}')">
+ <label>Property name or ID<input name="name" value="${e(p.name||"")}" required></label><label>Full address<input name="addr" value="${e(p.addr||"")}" required></label>
+ <label>Rental type<select name="kind"><option value="PRS" ${p.kind!="STR"?"selected":""}>Long-Term PRS</option><option value="STR" ${p.kind=="STR"?"selected":""}>Short-Term STR / Holiday Let</option></select></label>
+ <label>Purchase price<span class="amt"><input name="price" type="number" min="0" step="any" inputmode="decimal" value="${p.price??""}" required></span></label>
+ <label>Monthly mortgage interest<span class="amt"><input name="interest" type="number" min="0" step="any" inputmode="decimal" value="${p.interest??""}" required></span></label>
  <button class="btn" type="submit">Save property</button><button class="btn ghost" type="button" style="margin-top:8px" onclick="layer('')">Cancel</button></form>`);
 }
-function addProp(ev){ev.preventDefault();const f=new FormData(ev.target);
- S.props.push({id:uid(),name:f.get("name").trim(),addr:f.get("addr").trim(),kind:f.get("kind"),price:+f.get("price"),interest:+f.get("interest")});
- save();layer("");render();toast("Property saved")}
+function addProp(ev,id){ev.preventDefault();const f=new FormData(ev.target),d={name:f.get("name").trim(),addr:f.get("addr").trim(),kind:f.get("kind"),price:+f.get("price"),interest:+f.get("interest")};
+ if(id)Object.assign(S.props.find(q=>q.id==id),d);else S.props.push({id:uid(),...d});
+ save();layer("");render();toast(id?"Property updated":"Property saved")}
+function openProp(id){viewProp=id;render();scrollTo(0,0)}
+function propDetail(){const p=S.props.find(q=>q.id==viewProp);if(!p){viewProp=null;return props()}
+ const L=S.entries.filter(q=>q.pid==p.id).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id)),
+ tin=sum(L.filter(q=>q.type=="inc")),tex=sum(L.filter(q=>q.type=="exp"));
+ return`<button class="btn ghost sm" onclick="viewProp=null;render()">Back to properties</button>
+ <div class="top" style="margin-top:14px"><div><h1>${e(p.name)}</h1><p class="sub">${e(p.addr)}</p></div></div>
+ <div class="grid"><div class="card"><div class="lbl">Income, all time</div><div class="v inc">${gbp(tin)}</div></div><div class="card"><div class="lbl">Expenses, all time</div><div class="v exp">${gbp(tex)}</div></div></div>
+ <div style="display:flex;gap:8px;margin:14px 0"><button class="btn sm" onclick="propModal('${p.id}')">Edit property</button><button class="btn ghost sm" onclick="draft.pid='${p.id}';go('log')">Log entry</button></div>
+ <h2>History</h2><p class="sub" style="margin:-6px 0 10px">Tap an entry to edit or delete it</p>
+ <div class="card">${L.length?L.map(row).join(""):`<div class="empty">No entries for this property yet.</div>`}</div>`}
+function editEntry(id){const x=S.entries.find(q=>q.id==id);if(!x)return;
+ layer(`<h1 style="margin-bottom:14px">Edit ${x.type=="inc"?"income":"expense"}</h1><form onsubmit="saveEntry(event,'${id}')">
+ <label>Date<input name="date" type="date" value="${x.date}" required></label>
+ <label>Property<select name="pid">${S.props.map(p=>`<option value="${p.id}" ${p.id==x.pid?"selected":""}>${e(p.name)}</option>`).join("")}</select></label>
+ <label>Amount<span class="amt"><input name="amt" type="number" min="0.01" step="0.01" inputmode="decimal" value="${x.amt}" required></span></label>
+ ${x.type=="exp"?`<label>HMRC SA105 category<select name="cat">${CATS.map(c=>`<option ${c==x.cat?"selected":""}>${e(c)}</option>`).join("")}</select></label>`:""}
+ <label>Description<input name="desc" value="${e(x.desc)}" required></label>
+ <button class="btn" type="submit">Save changes</button><button class="btn ghost" type="button" style="margin-top:8px" onclick="delEntry('${id}')">Delete entry</button><button class="btn ghost" type="button" style="margin-top:8px" onclick="layer('')">Cancel</button></form>`)}
+function saveEntry(ev,id){ev.preventDefault();const f=new FormData(ev.target),x=S.entries.find(q=>q.id==id);
+ x.date=f.get("date");x.pid=f.get("pid");x.amt=+f.get("amt");x.desc=f.get("desc").trim();if(x.type=="exp")x.cat=f.get("cat");
+ save();layer("");render();toast("Changes saved")}
+function delEntry(id){if(confirm("Delete this entry?")){S.entries=S.entries.filter(q=>q.id!=id);save();layer("");render();toast("Entry deleted")}}
 function delProp(id){if(confirm("Remove this property? Its entries stay in your totals.")){S.props=S.props.filter(p=>p.id!=id);save();render()}}
 function postInterest(id){const p=S.props.find(x=>x.id==id);if(!p.interest)return;
  S.entries.push({id:uid(),date:today(),pid:id,type:"exp",amt:p.interest,desc:"Mortgage interest",cat:FIN});save();render();toast("Interest logged")}
@@ -179,7 +201,7 @@ function addEntry(ev){ev.preventDefault();const f=new FormData(ev.target);
 
 function tax(){
  const c=calc(),rows=CATS.map(k=>({k,v:sum(c.ex.filter(x=>x.cat==k))}));
- return`<div class="top"><div><h1>Tax &amp; MTD</h1><p class="sub">SA105 UK property · ${ty}/${String(ty+1).slice(2)}</p></div>${yearSel()}</div>
+ return`<div class="top"><div><h1>Tax summary</h1><p class="sub">SA105 UK property · ${ty}/${String(ty+1).slice(2)}</p></div>${yearSel()}</div>
  <div class="hero"><div class="lbl">Section 24 basic-rate tax reduction</div><div class="big gold">${gbp(c.relief,2)}</div>
  <p class="sub">20% of ${gbp(c.fin,2)} finance costs, capped at your property profit</p></div>
  <h2>Income</h2><div class="card"><div class="row"><div class="m"><b>Total rents and other income</b></div><b class="inc">${gbp(c.inc,2)}</b></div></div>
@@ -188,12 +210,12 @@ function tax(){
  <div class="row"><div class="m"><b>Allowable expenses</b><span>Excludes finance costs</span></div><b>${gbp(c.allow,2)}</b></div>
  <div class="row"><div class="m"><b>Adjusted net profit</b></div><b class="${c.adj<0?"exp":"inc"}">${gbp(c.adj,2)}</b></div>
  <div class="row"><div class="m"><b>Total finance costs</b></div><b>${gbp(c.fin,2)}</b></div></div>
- <button class="btn" style="margin-top:16px" onclick="exportSum()">Export summary</button>
- <p class="note">Estimate only, based on your logged entries. Section 24 relief can be further limited by total income, so check with an accountant before filing.</p>`;
+ <button class="btn" style="margin-top:16px" onclick="exportSum()">Export summary</button><button class="btn ghost" style="margin-top:8px" onclick="dataModal()">Export data &amp; backup</button>
+ <p class="note">PropertyPulse keeps your records and estimates your figures. It doesn't file with HMRC, so export your data to HMRC-recognised software to submit. Estimates are based on your logged entries. Section 24 relief can be further limited by total income, so check with an accountant before filing.</p>`;
 }
 function exportSum(){
  const c=calc(),L=(a,b)=>a.padEnd(46,".")+b.padStart(12);
- const t=["PROPERTYPULSE MTD · SA105 SUMMARY",`Tax year ${ty}/${String(ty+1).slice(2)} (6 Apr ${ty} to 5 Apr ${ty+1})`,"",
+ const t=["PROPERTYPULSE · SA105 SUMMARY",`Tax year ${ty}/${String(ty+1).slice(2)} (6 Apr ${ty} to 5 Apr ${ty+1})`,"",
  L("Total rents and other income",gbp(c.inc,2)),"",...CATS.slice(1).map(k=>L(k.slice(0,44),gbp(sum(c.ex.filter(x=>x.cat==k)),2))),"",
  L("Total allowable expenses",gbp(c.allow,2)),L("Adjusted net profit",gbp(c.adj,2)),"",
  L("Finance costs (mortgage interest)",gbp(c.fin,2)),L("Section 24 reduction at 20%",gbp(c.relief,2)),"","Estimate for reference. Not submitted to HMRC."].join("\n");
@@ -203,9 +225,29 @@ function copySum(){const t=document.getElementById("sum").textContent;
  try{navigator.clipboard.writeText(t).then(()=>toast("Copied"),()=>sel())}catch(x){sel()}
  function sel(){const r=document.createRange();r.selectNodeContents(document.getElementById("sum"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Selected. Press copy")}}
 
+function csv(){
+ const q=v=>'"'+String(v).replace(/"/g,'""')+'"',H=["Date","Property","Type","Category","Description","Amount","Signed amount"];
+ const rows=[...ents()].sort((a,b)=>a.date.localeCompare(b.date)).map(x=>{const i=x.type=="inc";
+  return[x.date,q(pname(x.pid)),i?"Income":"Expense",q(i?"Rental income":x.cat),q(x.desc),x.amt.toFixed(2),((i?1:-1)*x.amt).toFixed(2)].join(",")});
+ return"\ufeff"+[H.join(","),...rows].join("\r\n")}
+function dl(name,text,type){try{const u=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000);toast("Saved to Downloads")}catch(x){toast("Download blocked. Try Copy")}}
+function dlCsv(){dl(`propertypulse-${ty}-${String(ty+1).slice(2)}.csv`,csv(),"text/csv")}
+function copyCsv(){try{navigator.clipboard.writeText(csv()).then(()=>toast("Copied"),()=>toast("Copy blocked"))}catch(x){toast("Copy blocked")}}
+function dlBackup(){dl(`propertypulse-backup-${today()}.json`,JSON.stringify(S),"application/json")}
+function restore(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();
+ rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!Array.isArray(d.props)||!Array.isArray(d.entries))throw 0;
+  if(confirm(`Replace everything with this backup (${d.props.length} properties, ${d.entries.length} entries)?`)){S={props:d.props,entries:d.entries};save();layer("");render();toast("Backup restored")}}
+  catch(x){toast("That isn't a PropertyPulse backup")}};rd.readAsText(f)}
+function dataModal(){const n=ents().length;
+ layer(`<h1>Export &amp; backup</h1><h2>For your accountant or accounting software</h2>
+ <p class="sub" style="margin-bottom:12px">${n} entries for tax year ${ty}/${String(ty+1).slice(2)} as a spreadsheet file (CSV). Check the import format of your software before you upload.</p>
+ <button class="btn" onclick="dlCsv()">Download CSV</button><button class="btn ghost" style="margin-top:8px" onclick="copyCsv()">Copy as text</button>
+ <h2>Backup</h2><p class="sub" style="margin-bottom:12px">Your data lives only in this browser. Save a backup now and then, and restore it on a new phone or after clearing data.</p>
+ <button class="btn" onclick="dlBackup()">Download backup</button><button class="btn ghost" style="margin-top:8px" onclick="document.getElementById('rf').click()">Restore from backup</button>
+ <input id="rf" type="file" accept=".json,application/json" style="display:none" onchange="restore(this)"><button class="btn ghost" style="margin-top:8px" onclick="layer('')">Close</button>`)}
 function layer(h){const l=document.getElementById("layer");l.innerHTML=h?`<div class="ov" onclick="if(event.target==this)layer('')"><div class="sheet">${h}</div></div>`:""}
 function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
-function go(t){tab=t;render();scrollTo(0,0)}
+function go(t){tab=t;viewProp=null;render();scrollTo(0,0)}
 function render(){
  document.getElementById("app").innerHTML={dash,props,log,tax}[tab]();
  document.getElementById("nav").innerHTML=TABS.map(t=>`<button class="${t[0]==tab?"on":""}" onclick="go('${t[0]}')" ${t[0]==tab?'aria-current="page"':""}><svg viewBox="0 0 24 24"><path d="${t[2]}"/></svg>${t[1]}</button>`).join("");
