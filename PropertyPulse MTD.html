@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PropertyPulse MTD</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e17;--s1:rgba(255,255,255,.055);--s2:rgba(255,255,255,.1);--line:rgba(255,255,255,.12);--tx:#f1f4fa;--mu:#9aa6bb;--inc:#6ee7b7;--exp:#fda4af;--acc:#7cc4ff;--gold:#f5d38a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);color-scheme:dark}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(900px 500px at 85% -10%,rgba(124,196,255,.24),transparent 60%),radial-gradient(700px 500px at -10% 35%,rgba(110,231,183,.14),transparent 60%),radial-gradient(800px 600px at 100% 100%,rgba(245,211,138,.11),transparent 60%),var(--bg);background-attachment:fixed;color:var(--tx);font:500 15px/1.45 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#app{max-width:520px;margin:0 auto;padding:18px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+h1,h2{font-family:Fraunces,Georgia,serif;font-weight:600;margin:0}
+h1{font-size:26px;letter-spacing:-.01em}
+h2{font-size:18px;margin:26px 0 12px}
+.sub{color:var(--mu);font-size:13px;margin:2px 0 0}
+.top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
+select,input,button{font:inherit;color:inherit}
+.pill{background:var(--s1);border:1px solid var(--line);border-radius:99px;padding:7px 12px;font-size:13px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(124,196,255,.24),rgba(110,231,183,.1) 55%,rgba(245,211,138,.16));border:1px solid rgba(255,255,255,.22);border-radius:24px;padding:22px;backdrop-filter:blur(16px);box-shadow:0 24px 50px -24px rgba(124,196,255,.55),inset 0 1px 0 rgba(255,255,255,.3)}
+.big{font-family:Fraunces,Georgia,serif;font-size:38px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.lbl{color:var(--mu);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:14px;backdrop-filter:blur(14px);box-shadow:0 10px 30px -18px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1)}
+.card .v{font-family:Fraunces,Georgia,serif;font-size:21px;font-weight:600;margin-top:4px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}.gold{color:var(--gold)}
+.chart{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:16px;backdrop-filter:blur(14px);box-shadow:0 10px 30px -18px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1)}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mu);margin-top:8px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+#tip{min-height:20px;font-size:13px;margin-top:8px}
+.row{display:flex;align-items:center;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.dot{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:700;flex:none}
+.row .m{flex:1;min-width:0}.row .m b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .m span{color:var(--mu);font-size:12px}
+.btn{background:linear-gradient(135deg,#7cc4ff,#6ee7b7);color:#07121c;border:0;border-radius:16px;padding:14px 18px;font-weight:700;cursor:pointer;width:100%;box-shadow:0 10px 26px -10px rgba(124,196,255,.7),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s}.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--s2);color:var(--tx);border:1px solid var(--line);box-shadow:none}
+.btn.sm{width:auto;padding:9px 14px;font-size:13px}
+.tag{font-size:12px;border-radius:99px;padding:3px 9px;background:var(--s2);border:1px solid var(--line);color:var(--acc)}
+.tag.str{color:var(--gold)}
+.prop{margin-bottom:10px}
+.prop .h{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.prop .st{display:flex;gap:18px;margin:12px 0}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:4px;margin-bottom:16px}
+.seg button{border:0;background:none;padding:12px;border-radius:12px;font-weight:700;color:var(--mu);cursor:pointer}
+.seg button.on.i{background:rgba(127,207,166,.16);color:var(--inc)}
+.seg button.on.x{background:rgba(231,160,143,.16);color:var(--exp)}
+label{display:block;margin-bottom:14px;color:var(--mu);font-size:13px}
+label input,label select{display:block;width:100%;margin-top:6px;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--tx);font-size:16px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.amt{position:relative}.amt:before{content:"£";position:absolute;left:14px;bottom:13px;color:var(--mu);font-size:16px}
+.amt input{padding-left:30px}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(10,14,23,.72);backdrop-filter:blur(22px) saturate(1.5);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:4px;z-index:5}
+nav button{flex:1;max-width:120px;background:none;border:0;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:6px 0;cursor:pointer;border-radius:12px}
+nav button.on{color:var(--acc);background:rgba(124,196,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 0 18px -4px rgba(124,196,255,.5)}
+nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ov{position:fixed;inset:0;background:rgba(5,8,12,.7);z-index:10;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#0f1521;border:1px solid var(--line);border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88%;overflow:auto;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+pre{white-space:pre-wrap;font:12.5px/1.6 ui-monospace,Menlo,monospace;background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--inc);color:#0b1a12;padding:10px 18px;border-radius:99px;font-weight:700;z-index:20}
+.note{color:var(--mu);font-size:12px;margin-top:18px}
+.empty{color:var(--mu);text-align:center;padding:26px 0}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:34px;height:34px;filter:drop-shadow(0 4px 12px rgba(124,196,255,.5))}.big{text-shadow:0 0 34px rgba(124,196,255,.35)}option{background:#141a26;color:#f1f4fa}.dot{box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+@media (prefers-reduced-motion:no-preference){.hero:after{content:'';position:absolute;top:-50%;left:-40%;width:40%;height:200%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:rotate(8deg);animation:sheen 1.8s ease-out .5s 1 both}@keyframes sheen{to{left:130%}}.sheet{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.4}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav"></nav>
+<div id="layer"></div>
+<script>
+const CATS=["Mortgage Interest (Finance Costs)","Repairs & Maintenance","Legal & Professional Fees","Property Agent Fees","Property Insurance","Utilities & Council Tax","Ground Rent & Service Charge","Platform/Advertising Fees (Airbnb/Booking.com)","Cleaning, Laundry & Guest Supplies","Travel & Vehicle Costs","Other Allowable Property Expenses"];
+const FIN=CATS[0],KEY="propertypulse_v1";
+const TABS=[["dash","Dashboard","M3 12l9-8 9 8M5 10v10h14V10"],["props","Properties","M4 21V7l8-4 8 4v14M9 21v-6h6v6"],["log","Log Entry","M12 5v14M5 12h14"],["tax","Tax & MTD","M6 3h9l4 4v14H6zM9 12h7M9 16h7"]];
+let S,tab="dash",type="inc",ty=2026,tipIdx=null,draft={};
+const e=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const gbp=(n,d=0)=>(n<0?"-":"")+"£"+Math.abs(n).toLocaleString("en-GB",{minimumFractionDigits:d,maximumFractionDigits:d});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const today=()=>new Date().toISOString().slice(0,10);
+
+function seed(){
+ const props=[{id:"p1",name:"Elm Court, Flat 4",addr:"4 Elm Court, Manchester M14 5QA",kind:"PRS",price:185000,interest:420},
+ {id:"p2",name:"Harbour View Cottage",addr:"9 Quay Street, Whitby YO21 3PE",kind:"STR",price:290000,interest:680},
+ {id:"p3",name:"14 Northgate Road",addr:"14 Northgate Road, Leeds LS6 2JD",kind:"PRS",price:210000,interest:510}];
+ const en=[],add=(d,p,t,a,ds,c)=>en.push({id:uid(),date:d,pid:p,type:t,amt:a,desc:ds,cat:c||""});
+ const str=[1850,2240,3120,3890,4210,2960];
+ for(let m=0;m<6;m++){const M=String(m+4).padStart(2,"0"),d=x=>`2026-${M}-${x}`;
+  add(d("06"),"p1","inc",950,"Monthly rent");add(d("06"),"p3","inc",1100,"Monthly rent");add(d("28"),"p2","inc",str[m],"Holiday bookings");
+  add(d("15"),"p1","exp",420,"Mortgage interest",FIN);add(d("15"),"p2","exp",680,"Mortgage interest",FIN);add(d("15"),"p3","exp",510,"Mortgage interest",FIN);
+  add(d("20"),"p2","exp",Math.round(str[m]*.15),"Platform commission",CATS[7]);add(d("10"),"p1","exp",95,"Agent management fee",CATS[3]);}
+ add("2026-05-12","p3","exp",340,"Boiler service & repair",CATS[1]);add("2026-06-03","p2","exp",185,"Buildings & contents insurance",CATS[4]);
+ add("2026-07-19","p1","exp",620,"Bathroom leak repair",CATS[1]);add("2026-08-08","p2","exp",260,"Utilities, gas & electric",CATS[5]);add("2026-09-14","p3","exp",450,"Tenancy agreement, legal check",CATS[2]);
+ return{props,entries:en};
+}
+function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(x){}return seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(x){}}
+S=load();
+
+const inTY=d=>d>=`${ty}-04-06`&&d<=`${ty+1}-04-05`;
+const ents=()=>S.entries.filter(x=>inTY(x.date));
+const sum=a=>a.reduce((t,x)=>t+x.amt,0);
+function calc(){
+ const E=ents(),inc=sum(E.filter(x=>x.type=="inc")),ex=E.filter(x=>x.type=="exp"),
+ fin=sum(ex.filter(x=>x.cat==FIN)),allow=sum(ex)-fin,adj=inc-allow,
+ relief=Math.max(0,Math.min(fin,Math.max(adj,0)))*.2;
+ return{E,inc,ex,fin,allow,adj,relief,totalExp:sum(ex),net:inc-sum(ex)};
+}
+const pname=id=>(S.props.find(p=>p.id==id)||{name:"Deleted property"}).name;
+
+function dash(){
+ const c=calc(),mo=Array.from({length:12},(_,i)=>{const m=(i+3)%12,y=ty+(m<3?1:0),k=`${y}-${String(m+1).padStart(2,"0")}`;
+  const L=c.E.filter(x=>x.date.startsWith(k));return{n:"AMJJASONDJFM"[i],i:sum(L.filter(x=>x.type=="inc")),x:sum(L.filter(x=>x.type=="exp"))}});
+ const mx=Math.max(1,...mo.map(m=>Math.max(m.i,m.x))),H=130;
+ const bars=mo.map((m,i)=>{const x=10+i*27,hi=m.i/mx*H,hx=m.x/mx*H;
+  return`<g data-i="${i}" style="cursor:pointer"><rect x="${x-2}" y="0" width="25" height="${H+22}" fill="transparent"/>
+  <rect x="${x}" y="${H-hi}" width="10" height="${hi}" rx="3" fill="url(#gi)" opacity="${tipIdx==null||tipIdx==i?1:.35}"/>
+  <rect x="${x+11}" y="${H-hx}" width="10" height="${hx}" rx="3" fill="url(#gx)" opacity="${tipIdx==null||tipIdx==i?1:.35}"/>
+  <text x="${x+10}" y="${H+16}" text-anchor="middle" font-size="10" fill="var(--mu)">${m.n}</text></g>`}).join("");
+ const t=tipIdx!=null?mo[tipIdx]:null;
+ const rec=[...c.E].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id)).slice(0,3);
+ return`<div class="top"><div><div class="brand"><svg class="logo" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cc4ff"/><stop offset="1" stop-color="#6ee7b7"/></linearGradient></defs><rect width="32" height="32" rx="10" fill="url(#lg)"/><path d="M6 18h5l3-7 4 12 3-7h5" fill="none" stroke="#0a0e17" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>PropertyPulse</h1></div><p class="sub">Tax year ${ty}/${String(ty+1).slice(2)}</p></div>${yearSel()}</div>
+ <div class="hero"><div class="lbl">Net operating profit</div><div class="big ${c.net<0?"exp":""}">${gbp(c.net)}</div>
+ <p class="sub">${S.props.length} propert${S.props.length==1?"y":"ies"} · ${c.E.length} entries logged</p></div>
+ <div class="grid"><div class="card"><div class="lbl">Gross revenue</div><div class="v inc">${gbp(c.inc)}</div></div>
+ <div class="card"><div class="lbl">Total expenses</div><div class="v exp">${gbp(c.totalExp)}</div></div>
+ <div class="card" style="grid-column:span 2"><div class="lbl">Estimated Section 24 tax relief (20% of finance costs)</div><div class="v gold">${gbp(c.relief)}</div></div></div>
+ <h2>Income vs expenses</h2><div class="chart"><svg viewBox="0 0 340 152" role="img" aria-label="Monthly income and expenses"><defs><linearGradient id="gi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ee7b7"/><stop offset="1" stop-color="#2dd4bf" stop-opacity=".5"/></linearGradient><linearGradient id="gx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fda4af"/><stop offset="1" stop-color="#fb7185" stop-opacity=".5"/></linearGradient></defs>${bars}</svg>
+ <div class="legend"><span><i style="background:var(--inc)"></i>Income</span><span><i style="background:var(--exp)"></i>Expenses</span></div>
+ <div id="tip">${t?`<b>${["April","May","June","July","August","September","October","November","December","January","February","March"][tipIdx]}</b>: <span class="inc">${gbp(t.i)}</span> in, <span class="exp">${gbp(t.x)}</span> out`:`<span class="lbl">Tap a month for details</span>`}</div></div>
+ <h2>Recent activity</h2><div class="card">${rec.length?rec.map(row).join(""):`<div class="empty">No entries yet. Log your first income or expense.</div>`}</div>`;
+}
+function row(x){const i=x.type=="inc";return`<div class="row"><div class="dot" style="background:${i?"rgba(127,207,166,.15)":"rgba(231,160,143,.15)"};color:var(--${i?"inc":"exp"})">${i?"↓":"↑"}</div>
+ <div class="m"><b>${e(x.desc||x.cat||"Entry")}</b><span>${e(pname(x.pid))} · ${new Date(x.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</span></div>
+ <b class="${i?"inc":"exp"}">${i?"+":"-"}${gbp(x.amt,2)}</b></div>`}
+function yearSel(){return`<select class="pill" onchange="ty=+this.value;tipIdx=null;render()" aria-label="Tax year">${[2025,2026,2027].map(y=>`<option value="${y}" ${y==ty?"selected":""}>${y}/${String(y+1).slice(2)}</option>`).join("")}</select>`}
+
+function props(){
+ const cards=S.props.map(p=>{const L=S.entries.filter(x=>x.pid==p.id&&inTY(x.date)),i=sum(L.filter(x=>x.type=="inc")),x=sum(L.filter(x=>x.type=="exp"));
+  return`<div class="card prop"><div class="h"><div><b style="font-size:16px">${e(p.name)}</b><p class="sub">${e(p.addr)}</p></div><span class="tag ${p.kind=="STR"?"str":""}">${p.kind=="STR"?"Holiday let":"Long-term"}</span></div>
+  <div class="st"><div><div class="lbl">Income</div><b class="inc">${gbp(i)}</b></div><div><div class="lbl">Expenses</div><b class="exp">${gbp(x)}</b></div><div><div class="lbl">Bought for</div><b>${gbp(p.price)}</b></div></div>
+  <div style="display:flex;gap:8px"><button class="btn ghost sm" onclick="postInterest('${p.id}')">Log ${gbp(p.interest)} interest</button><button class="btn ghost sm" onclick="delProp('${p.id}')">Remove</button></div></div>`}).join("");
+ return`<div class="top"><div><h1>Properties</h1><p class="sub">Your rental portfolio</p></div></div>
+ <button class="btn" onclick="propModal()" style="margin-bottom:14px">Add property</button>${cards||`<div class="empty">No properties yet. Add one to start logging.</div>`}
+ <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost sm" onclick="if(confirm('Delete everything and start with an empty account?')){S={props:[],entries:[]};save();render()}">Start fresh</button><button class="btn ghost sm" onclick="if(confirm('Replace all data with the sample data?')){S=seed();save();render()}">Reset sample data</button></div>`;
+}
+function propModal(){
+ layer(`<h1 style="margin-bottom:14px">Add property</h1><form onsubmit="addProp(event)">
+ <label>Property name or ID<input name="name" required></label><label>Full address<input name="addr" required></label>
+ <label>Rental type<select name="kind"><option value="PRS">Long-Term PRS</option><option value="STR">Short-Term STR / Holiday Let</option></select></label>
+ <label>Purchase price<span class="amt"><input name="price" type="number" min="0" step="any" inputmode="decimal" required></span></label>
+ <label>Monthly mortgage interest<span class="amt"><input name="interest" type="number" min="0" step="any" inputmode="decimal" required></span></label>
+ <button class="btn" type="submit">Save property</button><button class="btn ghost" type="button" style="margin-top:8px" onclick="layer('')">Cancel</button></form>`);
+}
+function addProp(ev){ev.preventDefault();const f=new FormData(ev.target);
+ S.props.push({id:uid(),name:f.get("name").trim(),addr:f.get("addr").trim(),kind:f.get("kind"),price:+f.get("price"),interest:+f.get("interest")});
+ save();layer("");render();toast("Property saved")}
+function delProp(id){if(confirm("Remove this property? Its entries stay in your totals.")){S.props=S.props.filter(p=>p.id!=id);save();render()}}
+function postInterest(id){const p=S.props.find(x=>x.id==id);if(!p.interest)return;
+ S.entries.push({id:uid(),date:today(),pid:id,type:"exp",amt:p.interest,desc:"Mortgage interest",cat:FIN});save();render();toast("Interest logged")}
+
+function log(){
+ const p=S.props;if(!p.length)return`<div class="top"><h1>Log entry</h1></div><div class="empty">Add a property first, then come back to log entries.</div><button class="btn" onclick="go('props')">Go to Properties</button>`;
+ return`<div class="top"><div><h1>Log entry</h1><p class="sub">Takes about ten seconds</p></div></div>
+ <div class="seg"><button class="i ${type=="inc"?"on":""}" onclick="setType('inc')">Income</button><button class="x ${type=="exp"?"on":""}" onclick="setType('exp')">Expense</button></div>
+ <form onsubmit="addEntry(event)"><label>Date<input name="date" type="date" value="${draft.date||today()}" required></label>
+ <label>Property<select name="pid">${p.map(x=>`<option value="${x.id}" ${draft.pid==x.id?"selected":""}>${e(x.name)}</option>`).join("")}</select></label>
+ <label>Amount<span class="amt"><input name="amt" type="number" min="0.01" step="0.01" inputmode="decimal" required></span></label>
+ ${type=="exp"?`<label>HMRC SA105 category<select name="cat">${CATS.map(c=>`<option>${e(c)}</option>`).join("")}</select></label>`:""}
+ <label>Description<input name="desc" placeholder="${type=="inc"?"e.g. May rent, Airbnb payout":"e.g. Boiler repair"}" required></label>
+ <button class="btn" type="submit">Save ${type=="inc"?"income":"expense"}</button></form>`;
+}
+function setType(t){type=t;render()}
+function addEntry(ev){ev.preventDefault();const f=new FormData(ev.target);
+ S.entries.push({id:uid(),date:f.get("date"),pid:f.get("pid"),type,amt:+f.get("amt"),desc:f.get("desc").trim(),cat:type=="exp"?f.get("cat"):""});
+ draft={date:f.get("date"),pid:f.get("pid")};save();render();toast(type=="inc"?"Income saved":"Expense saved")}
+
+function tax(){
+ const c=calc(),rows=CATS.map(k=>({k,v:sum(c.ex.filter(x=>x.cat==k))}));
+ return`<div class="top"><div><h1>Tax &amp; MTD</h1><p class="sub">SA105 UK property · ${ty}/${String(ty+1).slice(2)}</p></div>${yearSel()}</div>
+ <div class="hero"><div class="lbl">Section 24 basic-rate tax reduction</div><div class="big gold">${gbp(c.relief,2)}</div>
+ <p class="sub">20% of ${gbp(c.fin,2)} finance costs, capped at your property profit</p></div>
+ <h2>Income</h2><div class="card"><div class="row"><div class="m"><b>Total rents and other income</b></div><b class="inc">${gbp(c.inc,2)}</b></div></div>
+ <h2>Expenses by SA105 category</h2><div class="card">${rows.map(r=>`<div class="row"><div class="m"><b style="white-space:normal">${e(r.k)}</b>${r.k==FIN?`<span>Not deducted. Relief is given as a tax credit</span>`:""}</div><b class="${r.v?"":"lbl"}">${gbp(r.v,2)}</b></div>`).join("")}</div>
+ <h2>Your figures</h2><div class="card">
+ <div class="row"><div class="m"><b>Allowable expenses</b><span>Excludes finance costs</span></div><b>${gbp(c.allow,2)}</b></div>
+ <div class="row"><div class="m"><b>Adjusted net profit</b></div><b class="${c.adj<0?"exp":"inc"}">${gbp(c.adj,2)}</b></div>
+ <div class="row"><div class="m"><b>Total finance costs</b></div><b>${gbp(c.fin,2)}</b></div></div>
+ <button class="btn" style="margin-top:16px" onclick="exportSum()">Export summary</button>
+ <p class="note">Estimate only, based on your logged entries. Section 24 relief can be further limited by total income, so check with an accountant before filing.</p>`;
+}
+function exportSum(){
+ const c=calc(),L=(a,b)=>a.padEnd(46,".")+b.padStart(12);
+ const t=["PROPERTYPULSE MTD · SA105 SUMMARY",`Tax year ${ty}/${String(ty+1).slice(2)} (6 Apr ${ty} to 5 Apr ${ty+1})`,"",
+ L("Total rents and other income",gbp(c.inc,2)),"",...CATS.slice(1).map(k=>L(k.slice(0,44),gbp(sum(c.ex.filter(x=>x.cat==k)),2))),"",
+ L("Total allowable expenses",gbp(c.allow,2)),L("Adjusted net profit",gbp(c.adj,2)),"",
+ L("Finance costs (mortgage interest)",gbp(c.fin,2)),L("Section 24 reduction at 20%",gbp(c.relief,2)),"","Estimate for reference. Not submitted to HMRC."].join("\n");
+ layer(`<h1 style="margin-bottom:14px">Filing preview</h1><pre id="sum">${e(t)}</pre><button class="btn" onclick="copySum()">Copy summary</button><button class="btn ghost" style="margin-top:8px" onclick="layer('')">Close</button>`);
+}
+function copySum(){const t=document.getElementById("sum").textContent;
+ try{navigator.clipboard.writeText(t).then(()=>toast("Copied"),()=>sel())}catch(x){sel()}
+ function sel(){const r=document.createRange();r.selectNodeContents(document.getElementById("sum"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Selected. Press copy")}}
+
+function layer(h){const l=document.getElementById("layer");l.innerHTML=h?`<div class="ov" onclick="if(event.target==this)layer('')"><div class="sheet">${h}</div></div>`:""}
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),1800)}
+function go(t){tab=t;render();scrollTo(0,0)}
+function render(){
+ document.getElementById("app").innerHTML={dash,props,log,tax}[tab]();
+ document.getElementById("nav").innerHTML=TABS.map(t=>`<button class="${t[0]==tab?"on":""}" onclick="go('${t[0]}')" ${t[0]==tab?'aria-current="page"':""}><svg viewBox="0 0 24 24"><path d="${t[2]}"/></svg>${t[1]}</button>`).join("");
+ document.querySelectorAll("[data-i]").forEach(g=>g.onclick=()=>{tipIdx=tipIdx==+g.dataset.i?null:+g.dataset.i;render()});
+}
+render();
+</script>
+</body>
+</html>
