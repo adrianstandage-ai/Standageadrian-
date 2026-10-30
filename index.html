@@ -196,7 +196,21 @@ label input:focus,label select:focus,label textarea:focus{outline:none;border-co
 }
 @media print{.sheet:before{display:none}}
 </style>
-</head>
+<style>/* profit-first home (v33) */
+.hero .big{font-size:clamp(46px,14vw,64px);line-height:1.02;letter-spacing:-.02em;margin:4px 0 6px}
+.hero .mln{position:relative;z-index:1;margin:0 0 10px;font-size:14px;font-weight:600;color:rgba(255,255,255,.8)}
+.hero .mln span{display:inline-block;padding:3px 9px;border-radius:99px;margin-right:4px;font-weight:800}
+.hero .mln .up{background:rgba(0,200,83,.2);color:#5ef39a}.hero .mln .dn{background:rgba(255,122,102,.2);color:#ff9a8a}
+.hero .hio{position:relative;z-index:1;display:flex;gap:16px;font-size:13px;color:rgba(255,255,255,.75);margin-bottom:4px}
+.hero .hio b{color:#fff;font-weight:700}.hero .hio i{font-style:normal;font-size:10px;margin-right:2px}.hero .hio i.inc{color:#5ef39a}.hero .hio i.exp{color:#ff9a8a}
+:root:not([data-theme=warm]) .hero .mln,:root:not([data-theme=warm]) .hero .hio{color:var(--mu)}:root:not([data-theme=warm]) .hero .hio b{color:var(--tx)}
+</style><style>/* Biscuit records assistant (v33) */
+.nd .ndl{width:62px;font-size:12px;font-weight:600;color:var(--mu)}.nd .ndv{font-size:11px;width:32px;text-align:right;color:var(--mu)}
+.nd .br i{transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.todo{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.todo.ok{color:var(--inc);font-weight:600;font-size:14px}
+.tdh{font-weight:800;font-size:14px;margin-bottom:4px}
+.tdr{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13.5px}.tdr span{flex:1;min-width:0}.tdr .btn{width:auto;flex:none;padding:8px 12px;font-size:12.5px}
+</style></head>
 <body>
 <div id="app"></div>
 <nav id="nav"></nav>
@@ -251,6 +265,7 @@ function calc(f){
 }
 const pname=id=>id=="tax"?"Tax, all properties":(S.props.find(p=>p.id==id)||{name:"Deleted property"}).name;
 
+function monthLine(c){const d=nowD(),k=today().slice(0,7),pk=new Date(d.getFullYear(),d.getMonth()-1,15).toISOString().slice(0,7),f=q=>c.E.filter(x=>x.date.startsWith(q));let L=f(k),w="this month";if(!L.length){L=f(pk);w="last month"}if(!L.length)return`<p class="mln">Nothing logged yet this month</p>`;const n=sum(L.filter(x=>x.type=="inc"))-sum(L.filter(x=>x.type=="exp"));return`<p class="mln"><span class="${n<0?"dn":"up"}">${n<0?"▼":"▲"} ${gbp(Math.abs(n))}</span> ${w}</p>`}
 function dash(ins){if(new Set(S.props.map(p=>p.kind||"PRS")).size<2)DF="all";
  const c=calc(DF),mo=Array.from({length:12},(_,i)=>{const m=(i+3)%12,y=ty+(m<3?1:0),k=`${y}-${String(m+1).padStart(2,"0")}`;
   const L=c.E.filter(x=>x.date.startsWith(k));return{n:"AMJJASONDJFM"[i],i:sum(L.filter(x=>x.type=="inc")),x:sum(L.filter(x=>x.type=="exp"))}});
@@ -269,12 +284,10 @@ function dash(ins){if(new Set(S.props.map(p=>p.kind||"PRS")).size<2)DF="all";
 <g fill="none" stroke="#effffa" stroke-width="32" stroke-linejoin="round"><path d="M100 280L250 156 348 238" stroke-linecap="round"/><path d="M176 232V424" stroke-linecap="butt"/><path d="M348 238C392 276 376 322 320 322H176" stroke-linecap="butt"/></g>
 <rect x="238" y="250" width="36" height="36" fill="#effffa"/>
 <path class="pl" d="M182 424L262 372 316 428 414 282" fill="none" stroke="#effffa" stroke-width="32" stroke-linejoin="round" stroke-linecap="butt"/>
-<path d="M458 232L386 246 446 306Z" fill="#effffa"/></g></svg><h1>PropNet</h1></div><p class="sub">Track profit. Get SA105-ready.</p></div><div style="display:flex;gap:10px;align-items:center">${yearSel()}<button class="avb" onclick="profModal()" aria-label="Profile">${av()}</button></div></div><p class="greet">${greet()}</p>${fwCard()}${filt()}<div id="instw">${instCard()}</div>${demoCard()}
- <div class="hero scn ${tod()}"><div class="lbl">Net operating profit</div><div class="big ${c.net<0?"exp":""}" data-net="${c.net}" data-k="${ty}|${DF}">${gbp(c.net)}</div>
- <p class="sub">${PN} propert${PN==1?"y":"ies"} · ${c.E.length} entries logged</p>${sky()}</div>${shareNote()}${wchip()}${ins?"":pupCard()}
- <div class="grid"><div class="card"><div class="lbl">Gross revenue</div><div class="v inc">${gbp(c.inc)}</div></div>
- <div class="card"><div class="lbl">Total expenses</div><div class="v exp">${gbp(c.totalExp)}</div></div>
- <div class="card" style="grid-column:span 2"><div class="lbl">Estimated Section 24 tax relief (${RP(ty)}% of finance costs)</div><div class="v gold">${gbp(c.relief)}</div></div></div>
+<path d="M458 232L386 246 446 306Z" fill="#effffa"/></g></svg><h1>PropNet</h1></div><p class="sub">Track profit. Get SA105-ready.</p></div><div style="display:flex;gap:10px;align-items:center">${yearSel()}<button class="avb" onclick="profModal()" aria-label="Profile">${av()}</button></div></div><p class="greet">${greet()}</p>${filt()}
+ <div class="hero scn ${tod()}"><div class="lbl">Net operating profit · ${ty}/${String(ty+1).slice(2)}</div><div class="big ${c.net<0?"exp":""}" data-net="${c.net}" data-k="${ty}|${DF}">${gbp(c.net)}</div>${monthLine(c)}
+ <div class="hio"><span><i class="inc">▲</i> In <b>${gbp(c.inc)}</b></span><span><i class="exp">▼</i> Out <b>${gbp(c.totalExp)}</b></span></div><p class="sub">${PN} propert${PN==1?"y":"ies"} · ${c.E.length} entries logged</p>${sky()}</div>${shareNote()}${wchip()}${fwCard()}<div id="instw">${instCard()}</div>${demoCard()}${ins?"":pupCard()}
+ <div class="grid"><div class="card" style="grid-column:span 2"><div class="lbl">Estimated Section 24 tax relief (${RP(ty)}% of finance costs)</div><div class="v gold">${gbp(c.relief)}</div></div></div>
  ${inboxCard()}${confirmCard()}${compCard()}${bkCard()}<h2>Recent activity</h2><div class="card">${rec.length?rec.map(row).join(""):`<div class="empty">No entries yet. Log your first income or expense.</div>`}</div><label class="btn" style="display:block;text-align:center;margin:14px 0 0;cursor:pointer;font-size:15px;font-weight:700">Snap a receipt<input type="file" accept="image/*" capture="environment" style="display:none" onchange="snapPick(this)"></label><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"><button class="btn ghost" onclick="go('all')">Search</button><button class="btn" onclick="go('ins')">Insights</button><button class="btn ghost" onclick="go('help')">Help</button></div>`;
 }
 function row(x){const i=x.type=="inc";return`<div class="row" data-eid="${x.id}" onclick="editEntry('${x.id}')" style="cursor:pointer"><div class="dot" style="background:${i?"rgba(127,207,166,.15)":"rgba(231,160,143,.15)"};color:var(--${i?"inc":"exp"})">${ic(x)}</div>
@@ -620,7 +633,10 @@ function sugg(){const L=[],d=nowD(),ym=d.getFullYear()+"-"+String(d.getMonth()+1
 function pickBub(){const g=sugg(),u=g.filter(x=>x.u);if(u.length&&Math.random()<.85)return u[Math.random()*u.length|0];if(g.length&&Math.random()<.55)return g[Math.random()*g.length|0];JK=Math.random()*JOKES.length|0;return{t:JOKES[JK]}}
 function bubTap(){const b=PS.say&&Date.now()<PS.say.u?PS.say:PS.b,a=b&&b.a;
  if(!a){JK=(JK+1)%JOKES.length;PS.say=null;PS.b={t:JOKES[JK]};applyPup();return}
- if(a=="feed")feedPup(PU.t>0?"bone":"biscuit");else if(a=="walk")walkPup();
+ doAct(a)}
+function doAct(a){if(a=="feed")feedPup(PU.t>0?"bone":"biscuit");else if(a=="walk")walkPup();
+ else if(a=="rcpt"){F={q:'',t:'exp',c:'',p:'',d1:ty+'-04-06',d2:(ty+1)+'-04-05',r:'no'};go('all')}
+ else if(a.startsWith("rent:")){type="inc";draft={...draft,pid:a.slice(5)};go("log")}
  else if(a=="inc"||a=="exp"){type=a;go("log")}
  else if(a=="cfm"||a=="inbox"){const el=document.getElementById(a=="cfm"?"cfm":"inbx");if(el)el.scrollIntoView({behavior:"smooth",block:"center"})}
  else if(a.startsWith("remask:"))remAsk(a.slice(7));else if(a=="dates")datesSetup();else if(a=="backup")shareBackup()}
@@ -643,8 +659,8 @@ function setPup(s,ms,then){clearTimeout(PS.tm);PS.s=s;if(s=="idle"||s=="sit")PS.
 function nextPup(prev){if(!document.getElementById("pupav")){PS.tm=null;return}
  const m=mood(),h=nowD().getHours(),night=h>=22||h<6,tr=PU.t>0,r=Math.random();
  const urg=sugg().some(x=>x.u),rd=(a,b)=>(a+Math.random()*(b-a))*1000;
- if(m<25||(night&&r<.5)){setPup("sleep",rd(14,24));return}
- const W=[["idle",.26],["sit",.2],["soul",.12+(tr?.14:0)],["att",.07+(tr?.12:0)+((hung()<50||wlk()<50)?.15:0)+(urg?.25:0)],["walk",.07],["sleep",.07],["happy",m>70?.07:.02]].filter(q=>q[0]!=prev||q[0]=="idle");
+ const busy=todos().length;if(!busy){setPup("sleep",rd(14,24));return}
+ const W=[["idle",.26],["sit",.2],["soul",.12+(tr?.14:0)],["att",.07+(tr?.12:0)+((hung()<50||wlk()<50)?.15:0)+(urg?.25:0)],["walk",.07],["happy",m>70?.07:.02]].filter(q=>q[0]!=prev||q[0]=="idle");
  let x=Math.random()*W.reduce((a,q)=>a+q[1],0),s="idle";for(const q of W){if((x-=q[1])<0){s=q[0];break}}
  if(s=="walk"){setPup("walk",2700,()=>setPup("away",2600,()=>setPup("ret",2700,()=>setPup("idle",3000))));return}
  setPup(s,{idle:rd(5,9),sit:rd(8,13),soul:rd(6,9),att:rd(5,7),sleep:rd(14,24),happy:rd(3,4)}[s])}
@@ -652,12 +668,24 @@ function pupStart(){if(!document.getElementById("pupav"))return;if(matchMedia("(
  if(PS.tm){applyPup()}else setPup("idle",2500)}
 function pupHappy(ms){if(document.getElementById("pupav"))setPup("happy",ms||3500)}
 function needBar(ic,v,c){return`<div class="nd" title="${v}%"><span>${ic}</span><div class="br"><i style="width:${Math.max(5,v)}%;background:${c}"></i></div></div>`}
+function recSt(){const d=nowD(),k=today().slice(0,7),pk=new Date(d.getFullYear(),d.getMonth()-1,15).toISOString().slice(0,7),ex=S.entries.filter(x=>x.type=="exp"&&x.cat!=FIN&&!x.link&&x.date>=ty+"-04-06"&&x.date<=(ty+1)+"-04-05"),nr=ex.filter(x=>!x.rc).length;
+ const rp=S.props.filter(p=>(p.kind||"PRS")!="STR"&&S.entries.some(x=>x.pid==p.id&&x.type=="inc")),miss=rp.filter(p=>!S.entries.some(x=>x.pid==p.id&&x.type=="inc"&&(x.date.startsWith(k)||(d.getDate()<=7&&x.date.startsWith(pk)))));
+ const od=S.rem.filter(r=>dd(r.due)<0).length;
+ return{nr,miss,rc:ex.length?Math.round((ex.length-nr)/ex.length*100):100,rent:rp.length?Math.round((rp.length-miss.length)/rp.length*100):100,dt:S.rem.length?Math.round((S.rem.length-od)/S.rem.length*100):0}}
+function todos(){const r=recSt(),L=sugg().filter(x=>x.a!="feed"&&x.a!="walk"&&x.a!="exp"&&!(x.a=="inc"&&r.miss.length));
+ r.miss.forEach(p=>L.push({t:"No rent logged for "+p.name+" this month",a:"rent:"+p.id,l:"Log rent"}));
+ if(r.nr)L.push({t:r.nr+" expense"+(r.nr>1?"s":"")+" without a receipt this tax year",a:"rcpt",l:"Show"});
+ const O=a=>a=="cfm"?0:a.startsWith("remask:")?1:a.startsWith("rent:")||a=="inc"?2:a=="inbox"?3:a=="dates"?4:a=="rcpt"?5:6;L.sort((x,y)=>O(x.a)-O(y.a));
+ return L.map(x=>({...x,t:x.t.replace(/^Have you done your (.+)\? It's (.+?) 🔔$/,(m,a,b)=>a+" "+b)}))}
+function recBar(l,v){const c=v>=80?"#00C853":v>=50?"#f59e0b":"#ef4444";return`<div class="nd"><span class="ndl">${l}</span><div class="br"><i style="width:${Math.max(4,v)}%;background:${c}"></i></div><b class="ndv">${v}%</b></div>`}
+function todoHTML(){const L=todos();if(!L.length)return`<div class="todo ok">✓ All tidy. Nothing needs doing, so ${e(PU.n)} is having a nap.</div>`;
+ return`<div class="todo"><div class="tdh">${L.length} thing${L.length>1?"s":""} to tidy</div>${L.slice(0,3).map(x=>`<div class="tdr"><span>${e(x.t.replace(/ [\u{1F300}-\u{1FAFF}\u2600-\u27BF]+$/u,""))}</span><button class="btn sm" onclick="doAct('${e(x.a)}')">${e(x.l||"Go")}</button></div>`).join("")}${L.length>3?`<div class="sub" style="margin-top:6px">+${L.length-3} more</div>`:""}</div>`}
 function pupCard(){if(PU.hide)return"";const m=mood(),st=streak(),t=PU.t,b=PU.b||0,bones=Math.min(t,6),si=sayInfo(PS.s);
  return`<div class="card pupc" id="pupc"><div style="display:flex;gap:6px;align-items:center"><div class="pupstage"><div id="pupav" class="pupav st-${PS.s}" onclick="petPup(event)" role="button" aria-label="Pet ${e(PU.n)}">${pupHTML(PS.s)}</div></div>
- <div style="flex:1;min-width:0"><button class="pn" onclick="renPup()">${e(PU.n)} ✎</button>${needBar("🍖",hung(),"#f59e0b")}${needBar("🦮",wlk(),"#38bdf8")}${needBar("💛",m,"#fb7185")}<div class="sub" style="margin-top:5px">${st?`🔥 ${st}-month streak`:"Log this month to start a streak"}</div></div></div>
+ <div style="flex:1;min-width:0"><button class="pn" onclick="renPup()">${e(PU.n)} ✎</button><div class="sub" style="margin:-2px 0 4px">Your records assistant</div>${(r=>recBar("Receipts",r.rc)+recBar("Rent",r.rent)+recBar("Dates",r.dt))(recSt())}<div class="sub" style="margin-top:5px">${st?`🔥 ${st}-month streak`:"Log this month to start a streak"}</div></div></div>${todoHTML()}
  <div class="say${si.a?" act":""}" id="pupsay" onclick="bubTap()">${sayHTML(PS.s)}</div>
  <div class="tray">${t||b?"":'<span class="sub">No treats yet. Log an entry to earn a bone!</span>'}${Array(bones).fill(0).map(()=>'<button class="tb" onclick="feedPup(\'bone\')" aria-label="Feed a bone">🦴</button>').join("")}${t>6?`<span class="more">+${t-6}</span>`:""}${b?`<button class="tb" onclick="feedPup('biscuit')" aria-label="Feed a biscuit">🍪<small>${b}</small></button>`:""}</div>
- <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" style="flex:1.3" onclick="walkPup()">🦮 Walk</button><button class="btn ghost sm" style="flex:1" onclick="wardrobe()">👒 Wardrobe</button><button class="btn ghost sm" style="flex:1" onclick="recapModal()">📸 Recap</button></div></div>`}
+ <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost sm" style="flex:1" onclick="wardrobe()">👒 Wardrobe</button><button class="btn ghost sm" style="flex:1" onclick="recapModal()">📸 Recap</button></div></div>`}
 function renPup(){layer(`<h1 style="margin-bottom:12px;text-align:center">Name your pup</h1><input id="pnm" maxlength="14" value="${e(PU.n)}" style="width:100%;margin-bottom:12px"><button class="btn" onclick="PU.n=(document.getElementById('pnm').value.trim()||'Biscuit');savePU();layer('');render()">Save</button><button class="btn ghost" style="margin-top:8px" onclick="layer('')">Cancel</button>`)}
 function wardrobe(){const u=unlocked(),cur=curHat(),done=PU.ms.length,ck=(id)=>PU.ms.includes(id);
  const tile=(h,name,req,on)=>`<button class="wd${on?" sel":""}${h&&!u.has(h)?" lock":""}" ${h&&!u.has(h)?"disabled":`onclick="PU.hat='${h||"none"}';savePU();wardrobe();render()"`}><svg viewBox="-13 -28 28 28" width="64" height="64" style="overflow:visible">${DOG(1.4,{hat:h})}</svg><b>${name}</b><span>${h&&!u.has(h)?"🔒 "+req:on?"Wearing":"Tap to wear"}</span></button>`;
