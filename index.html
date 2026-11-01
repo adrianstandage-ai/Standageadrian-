@@ -461,7 +461,7 @@ function upd(){const el=document.getElementById("lst");if(!el)return;const q=F.q
  const L=S.entries.filter(x=>(!F.t||x.type==F.t)&&(!F.p||x.pid==F.p)&&(!F.c||x.cat==F.c)&&(!F.d1||x.date>=F.d1)&&(!F.d2||x.date<=F.d2)&&(!F.r||(F.r=="no"?(x.type=="exp"&&x.cat!=FIN&&!x.rc):!!x.rc))&&(!q||(x.desc+" "+x.amt+" "+x.cat+" "+pname(x.pid)).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
  const net=sum(L.filter(x=>x.type=="inc"))-sum(L.filter(x=>x.type=="exp"));
  el.innerHTML=L.length?`<p class="sub" style="margin:0 0 6px">${L.length} entries · net ${gbp(net,2)}</p>`+L.slice(0,150).map(x=>SEL?srow(x):row(x)).join(""):`<div class="empty">No matching entries.</div>`;selBar()}
-const SUPPORT_EMAIL="propnet.support@gmail.com";
+const SUPPORT_EMAIL="propnet@standagedigital.co.uk";
 let pend,P;try{P=JSON.parse(localStorage.getItem("pp_profile"))}catch(x){}P=P||{name:"",photo:"",done:false};
 function saveP(){try{localStorage.setItem("pp_profile",JSON.stringify(P))}catch(x){}}
 function img(f,m,sq,cb){const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const c=document.createElement("canvas"),x=c.getContext("2d");
@@ -816,7 +816,7 @@ function csvAll(t){IMP.rows.forEach(r=>{if(r.dup)return;r.on=t=="all"?!r.dep:t==
 function csvShow(){layer(`<h1 style="text-align:center;margin-bottom:4px">Pick rows to import</h1><p class="sub" style="text-align:center;margin-bottom:8px">${IMP.rows.length} rows found${IMP.more?" (first 300 shown)":""}. Nothing is ticked yet.</p>${S.props.length>1?`<label>Property<select onchange="IMP.pid=this.value">${S.props.map(p=>`<option value="${p.id}">${e(p.name)}</option>`).join("")}</select></label>`:""}<div style="display:flex;gap:6px;margin:8px 0"><button class="btn ghost sm" style="flex:1" onclick="csvAll('inc')">Tick money in</button><button class="btn ghost sm" style="flex:1" onclick="csvAll('exp')">Tick money out</button><button class="btn ghost sm" style="flex:1" onclick="csvAll('')">Clear</button></div><div id="cvl" style="max-height:46vh;overflow:auto">${csvList()}</div><button class="btn" id="cvb" style="margin-top:10px" onclick="csvGo()" disabled>Tick rows to import</button><button class="btn ghost" style="margin-top:8px" onclick="layer('')">Cancel</button>`)}
 function csvGo(){if(!IMP||!IMP.pid){toast("Add a property first");return}if(!isProUser()){paywall("Importing bank statements is a Pro feature. You can preview any file for free.");return}let n=0;IMP.rows.forEach(r=>{if(!r.on)return;S.entries.push({id:uid(),date:r.d,pid:IMP.pid,type:r.t,amt:r.amt,desc:r.desc,cat:r.t=="exp"?r.cat:""});n++});if(!n)return;save();layer("");render();toast(n+" entr"+(n==1?"y":"ies")+" imported ✓");
  if(!PU.hide){PU.t=Math.min(99,PU.t+Math.min(3,Math.ceil(n/5)));savePU();stars(true);sfx("win");say("Imported "+n+" entries. That's a lot of tidy records! 🏆",null,9000);refreshPup();pupHappy(3500);setTimeout(milestones,900)}IMP=null}
-const APPV="35";
+const APPV="36";
 function sendFeedback(){const b=encodeURIComponent("What happened, or what would make PropNet better?\n\n\n\n(PropNet v"+APPV+")");location.href="mailto:"+SUPPORT_EMAIL+"?subject="+encodeURIComponent("PropNet feedback")+"&body="+b}
 async function shareApp(){const url=location.origin+location.pathname.replace(/index\.html$/,""),d={title:"PropNet",text:"I keep my landlord records in PropNet. It is free to try and there is no account to set up.",url};
  try{if(navigator.share){await navigator.share(d);return}}catch(x){if(x&&x.name=="AbortError")return}
