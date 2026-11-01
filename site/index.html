@@ -52,6 +52,18 @@ section{padding:84px 0;position:relative}
 .btn-sec{background:rgba(255,255,255,.06);color:var(--tx);border:1px solid var(--line2)}
 .btn-sec:hover{background:rgba(255,255,255,.1)}
 .btn svg{width:18px;height:18px;flex:none}
+.btn-free{background:#00c853;color:#04130a;box-shadow:0 10px 30px -10px rgba(0,200,83,.6)}
+.btn-free:hover{background:#12d862}
+.btn-pro{background:#f6f1e7;color:#0f172a}
+.btn-pro:hover{background:#fffaf0}
+.routes{display:grid;gap:14px;margin-top:30px}
+.route{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.route.pro{border-color:var(--line2)}
+.route .btn{width:100%}
+.route p{margin-top:10px;font-size:14.5px;line-height:1.45;color:var(--mu)}
+.route p b{color:var(--tx)}
+.demo-line{margin-top:16px;font-size:15px;color:var(--mu)}
+.nav-cta{display:flex;gap:8px}
 .price-note{font-size:14px;color:var(--mu);margin-top:14px}
 .price-note b{color:var(--tx)}
 .txt-link{color:var(--mint);font-weight:600;text-decoration:none;border-bottom:1px solid rgba(110,231,183,.35)}
@@ -64,7 +76,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(10,14,23,.78);backdrop-f
 .nav-links{display:none;gap:28px}
 .nav-links a{color:var(--mu);text-decoration:none;font-weight:600;font-size:15px}
 .nav-links a:hover{color:var(--tx)}
-.nav .btn{min-height:42px;padding:0 18px;font-size:14px}
+.nav .btn{min-height:40px;padding:0 14px;font-size:14px}
 
 /* hero */
 .hero{padding:48px 0 40px;overflow:hidden}
@@ -211,7 +223,8 @@ footer a:hover{color:var(--mint)}
 .buybar.on{transform:none}
 .buybar div{flex:1;font-size:13px;color:var(--mu);line-height:1.3}
 .buybar div b{display:block;color:var(--tx);font-size:15px}
-.buybar .btn{min-height:44px;padding:0 18px;font-size:14px}
+.buybar .btn{min-height:44px;padding:0 14px;font-size:14px}
+.buybar{gap:8px;padding-left:16px}
 
 /* reveal */
 .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
@@ -219,6 +232,7 @@ footer a:hover{color:var(--mint)}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 
 @media (min-width:640px){
+ .routes{grid-template-columns:1fr 1fr}
  .strip ul{grid-template-columns:repeat(4,1fr)}
  .pain{grid-template-columns:1fr 1fr}
  .grid-feats{grid-template-columns:1fr 1fr}
@@ -257,7 +271,7 @@ footer a:hover{color:var(--mint)}
   <nav class="nav-links" aria-label="Sections">
    <a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
   </nav>
-  <a class="btn btn-pri js-buy" href="#pricing" data-goatcounter-click="checkout-nav">Get PropNet</a>
+  <div class="nav-cta"><a class="btn btn-free js-app" href="../" data-goatcounter-click="app-nav">Try free</a><a class="btn btn-pro js-buy" href="#pricing" data-goatcounter-click="checkout-nav">Get Pro</a></div>
  </div>
 </header>
 
@@ -269,12 +283,11 @@ footer a:hover{color:var(--mint)}
    <span class="eyebrow">For UK landlords and holiday-let hosts</span>
    <h1>Your rental property finances. <em>Finally organised.</em></h1>
    <p class="lead">Keep track of rental income, expenses and receipts throughout the year. Get your property tax figures organised without the spreadsheet headache.</p>
-   <div class="cta-row">
-    <a class="btn btn-pri js-buy" href="#pricing" data-goatcounter-click="checkout-hero">Get PropNet — £39.99</a>
-    <a class="btn btn-sec" href="#demo" data-goatcounter-click="demo-hero"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch the demo</a>
+   <div class="routes">
+    <div class="route"><a class="btn btn-free js-app" href="../" data-goatcounter-click="app-hero">Try PropNet free</a><p><b>Free for 1 property.</b> Unlimited entries, receipt photos and reminders. No payment, no account.</p></div>
+    <div class="route pro"><a class="btn btn-pro js-buy" href="#pricing" data-goatcounter-click="checkout-hero">Get PropNet Pro</a><p><b>Unlimited properties</b>, split bills across them, bank statement import, and your summary as PDF and CSV for your accountant. <b>£39.99</b> first year, then <b>£29.99</b> a year. 14-day refund.</p></div>
    </div>
-   <p class="price-note"><b>£39.99</b> for the first year, then <b>£29.99</b> a year. Cancel any time. 14-day refund.</p>
-   <p class="free-line">Got one property? <a class="txt-link js-app" href="../" data-goatcounter-click="app-hero">Use it free</a>, no account needed.</p>
+   <p class="demo-line"><a class="txt-link" href="#demo" data-goatcounter-click="demo-hero">Watch the demo</a></p>
   </div>
   <div class="hero-visual">
    <div class="phone"><img src="img/dash.jpg" alt="PropNet home screen showing net operating profit for the tax year, money in and out, and four properties" width="780" height="1688" fetchpriority="high"></div>
@@ -452,7 +465,7 @@ footer a:hover{color:var(--mint)}
      <li>SA105-style summary on screen</li>
      <li>Backup and restore</li>
     </ul>
-    <a class="btn btn-sec js-app" href="../" data-goatcounter-click="app-pricing">Open the free app</a>
+    <a class="btn btn-free js-app" href="../" data-goatcounter-click="app-pricing">Try PropNet free</a>
    </div>
    <div class="plan pro rv">
     <span class="tag">PropNet Pro</span>
@@ -467,7 +480,7 @@ footer a:hover{color:var(--mint)}
      <li>Updates and email support</li>
      <li>Use on up to 3 phones</li>
     </ul>
-    <a class="btn btn-pri js-buy" id="buy" href="https://propnet.lemonsqueezy.com/checkout/buy/7f14d88d-dcde-4d88-b19b-d89855539569" rel="noopener" data-goatcounter-click="checkout-pricing">Get PropNet — £39.99</a>
+    <a class="btn btn-pro js-buy" id="buy" href="https://propnet.lemonsqueezy.com/checkout/buy/7f14d88d-dcde-4d88-b19b-d89855539569" rel="noopener" data-goatcounter-click="checkout-pricing">Get PropNet Pro — £39.99</a>
     <p class="small">Renews yearly at £29.99. Cancel any time. 14-day refund. Secure checkout by Lemon Squeezy.</p>
    </div>
   </div>
@@ -504,11 +517,10 @@ footer a:hover{color:var(--mint)}
   <div class="box rv">
    <h2>Get your property finances organised today.</h2>
    <p>Ten seconds an entry now saves a weekend in January.</p>
-   <div class="cta-row">
-    <a class="btn btn-pri js-buy" href="#pricing" data-goatcounter-click="checkout-final">Get PropNet — £39.99</a>
-    <a class="btn btn-sec js-app" href="../" data-goatcounter-click="app-final">Try it free first</a>
+   <div class="routes">
+    <div class="route"><a class="btn btn-free js-app" href="../" data-goatcounter-click="app-final">Try PropNet free</a><p><b>Free for 1 property.</b> Unlimited entries, receipt photos and reminders. No payment, no account.</p></div>
+    <div class="route pro"><a class="btn btn-pro js-buy" href="#pricing" data-goatcounter-click="checkout-final">Get PropNet Pro</a><p><b>Unlimited properties</b>, split bills across them, bank statement import, and your summary as PDF and CSV for your accountant. <b>£39.99</b> first year, then <b>£29.99</b> a year. 14-day refund.</p></div>
    </div>
-   <p class="price-note">£39.99 for the first year, then £29.99 a year. 14-day refund.</p>
   </div>
  </div>
 </section>
@@ -532,8 +544,9 @@ footer a:hover{color:var(--mint)}
 </footer>
 
 <div class="buybar" id="buybar" aria-hidden="true">
- <div><b>PropNet Pro</b>£39.99 first year, then £29.99</div>
- <a class="btn btn-pri js-buy" href="#pricing" tabindex="-1" data-goatcounter-click="checkout-bar">Get PropNet</a>
+ <div><b>Free: 1 property</b>Pro £39.99, then £29.99</div>
+ <a class="btn btn-free js-app" href="../" tabindex="-1" data-goatcounter-click="app-bar">Try free</a>
+ <a class="btn btn-pro js-buy" href="#pricing" tabindex="-1" data-goatcounter-click="checkout-bar">Get Pro</a>
 </div>
 
 <script>
